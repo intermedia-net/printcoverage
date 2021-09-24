@@ -1,0 +1,61 @@
+plugins {
+    id("java")
+    id("org.jetbrains.kotlin.jvm").version "1.5.31"
+    id("java-gradle-plugin")
+    id("com.gradle.plugin-publish").version("0.16.0")
+    id("io.gitlab.arturbosch.detekt").version("1.18.1")
+}
+
+group = "com.intermedia"
+version = "0.0.1"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_15
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.google.code.gson:gson:2.8.8")
+    implementation(gradleApi())
+
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1")
+}
+
+pluginBundle {
+    website = 'https://github.com/intermedia-net/printcoverage'
+    vcsUrl = 'https://github.com/intermedia-net/printcoverage.git'
+    description = 'Process jacoco report and print the code coverage to the Azure DevOps'
+    tags = ['jacoco', 'azure-devops', 'coverage']
+
+    plugins {
+        printcoveragePlugin {
+            displayName = 'printcoverage'
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group.toString()
+        artifactId = project.name
+        version = project.version.toString()
+    }
+}
+
+gradlePlugin {
+    plugins {
+        printcoveragePlugin {
+            id = 'com.intermedia.printcoverage'
+            implementationClass = 'com.intermedia.printcoverage.PrintCoveragePlugin'
+        }
+    }
+}
