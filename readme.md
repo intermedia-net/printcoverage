@@ -43,8 +43,8 @@ And then run it in the Azure pipeline as a policy for a target branch:
 ```
 
 ## How it works
-It processes the jacoco report xml file, count the coverage and send it via Azure
-DevOps api as a pull request status.
+The plugin processes the jacoco report xml file, analyzes the test coverage stat, and then posts it via Azure
+DevOps api as a pull request status update.
 
 <!-- Badges -->
 
