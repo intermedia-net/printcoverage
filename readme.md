@@ -11,7 +11,7 @@ pull requests!
 In the module `build.gradle`:
 ```groovy
 plugins {
-    id('com.intermedia.printcoverage').version('0.0.2')
+    id('com.intermedia.printcoverage').version('0.0.3')
 }
 
 import com.intermedia.printcoverage.azure.AzurePrinterFactory

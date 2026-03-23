@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.gradle.api.logging.Logger
+import java.io.IOException
 import java.util.Locale
 
 /**
@@ -35,14 +36,18 @@ class AzurePrinter(
             .post(body)
             .header(AUTH_HEADER, "Basic " + repo.authToken())
             .build()
-        okHttpClient.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) {
-                logger.warn(
-                    "Could not execute a call to azure devops API, " +
-                        "origin url: '$statusUrl'," +
-                        "response code: ${response.code}"
-                )
+        try {
+            okHttpClient.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    logger.warn(
+                        "Could not execute a call to azure devops API, " +
+                            "origin url: '$statusUrl'," +
+                            "response code: ${response.code}"
+                    )
+                }
             }
+        } catch (e: IOException) {
+            logger.warn("Could not print data to Azure Devops.", e)
         }
     }
 
