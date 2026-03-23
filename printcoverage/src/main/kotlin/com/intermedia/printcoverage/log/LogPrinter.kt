@@ -8,6 +8,6 @@ class LogPrinter(
 ) : Printer {
 
     override fun print(coverage: Double) {
-        logger.info("Code coverage is: $coverage")
+        logger.lifecycle("Code coverage is: $coverage")
     }
 }
