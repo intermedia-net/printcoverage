@@ -1,18 +1,23 @@
 package com.intermedia.printcoverage
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.NodeList
-import java.io.File
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-open class PrintCoverageTask : DefaultTask() {
+@CacheableTask
+abstract class PrintCoverageTask : DefaultTask() {
 
     private val db: DocumentBuilder by lazy {
         val documentBuilderFactory = DocumentBuilderFactory.newInstance()
@@ -27,15 +32,16 @@ open class PrintCoverageTask : DefaultTask() {
         return@lazy XPathFactory.newInstance().newXPath()
     }
 
-    @Input
-    lateinit var printer: Printer
+    @get:Input
+    abstract val printer: Property<Printer>
 
-    @InputFile
-    lateinit var jacocoReportFile: File
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val jacocoReportFile: RegularFileProperty
 
     @TaskAction
     fun printCoverage() {
-        val reportDoc = db.parse(jacocoReportFile)
+        val reportDoc = db.parse(jacocoReportFile.get().asFile)
         val counters = xPath.compile(COUNTER_XPATH)
         val counterNodes = counters.evaluate(
             reportDoc,
@@ -57,7 +63,7 @@ open class PrintCoverageTask : DefaultTask() {
         }
 
         val coverage = COVERAGE_FULL / (missed + covered) * covered
-        printer.print(coverage)
+        printer.get().print(coverage)
     }
 
     companion object {
