@@ -25,7 +25,8 @@ class AzureRepo(
 
     fun targetUrl(buildId: String): String {
         return String.format(
-            Locale.US, TARGET_URL_TEMPLATE,
+            Locale.US,
+            TARGET_URL_TEMPLATE,
             baseUrl,
             organization,
             project,
